@@ -34,6 +34,48 @@ java Hello
 
 
 
+exp1 git 
+
+git init
+echo "Hello from Shridhar" >demo.txt
+git status
+git add demo.txt
+git status
+git commit -m "Initial commit by Shridhar"
+git remote add origin https://github.com/Traxalien/legendary-goggles.git
+git branch -M main
+git push -u origin main
+
+
+
+exp2 git 
+git init
+echo "Main branch file by Shridhar" > main.txt
+git add .
+git commit -m "main branch initial commit by Shridhar"
+git branch feature
+git checkout feature
+echo "feature branch changes by Shridhar" > feature.txt
+git add .
+git commit -m "Added feature file by Shridhar"
+git checkout master
+git merge feature
+ls
+
+
+exp 3 git 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
