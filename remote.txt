@@ -1,1 +1,36 @@
-"This is Shridhar's Remote Demo" 
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                bat 'java -version'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                bat 'echo "Simulating tests"'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+            }
+        }
+    }
+}
+
+
+
+
+echo print('Hello from python')>Hello.py
+py Hello.py
+
+
+echo public class Hello{public static void main(String[] args ){System.out.println("HEllo from java");}}>Hello.java
+javac Hello.java
+java Hello
+
+
+
