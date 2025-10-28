@@ -76,6 +76,25 @@ exp 3 git
 
 
 
+# 1. Download (pull) an image from Docker Hub
+docker pull nginx:latest
+
+# 2. See all images on your machine
+docker images
+# OR: docker image ls
+
+# 3. Run an image to create a container (just to test)
+docker run -d -p 80:80 --name my-web-server nginx:latest
+
+# 4. Stop and remove the container
+docker stop my-web-server
+docker rm my-web-server
+
+# 5. Remove (delete) the image from your machine
+docker rmi nginx:latest
+
+# 6. Check images again to see it's gone
+docker images
 
 
 
