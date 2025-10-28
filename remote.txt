@@ -65,6 +65,15 @@ ls
 
 exp 3 git 
 
+git clone https://github.com/Traxalien/legendary-goggles.git
+ cd legendary-goggles
+ echo "This is Shridhar's remote demo" > remote.txt
+git add .
+ git commit -m "Added remote demo files by Shridhar"
+ git push origin main
+git pull origin main
+ls
+cat remote.txt
 
 
 
