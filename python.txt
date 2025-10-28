@@ -1,0 +1,48 @@
+class Playfair:
+    def __init__(self, key, text):
+        self.key, self.text = key.lower(), text.lower()
+        self.matrix = []
+
+    def clean_key(self):
+        self.key = ''.join(dict.fromkeys(self.key))
+
+    def gen_key_matrix(self):
+        temp = ''.join(ch for ch in self.key if ch != 'j')
+        temp += ''.join(ch for ch in 'abcdefghiklmnopqrstuvwxyz' if ch not in temp)
+        self.matrix = [list(temp[i:i+5]) for i in range(0, 25, 5)]
+        print("Playfair Cipher Key Matrix:")
+        for row in self.matrix: print(row)
+
+    def format_text(self):
+        msg = self.text.replace('j', 'i')
+        i = 0
+        while i < len(msg)-1:
+            if msg[i] == msg[i+1]: msg = msg[:i+1] + 'x' + msg[i+1:]
+            i += 2
+        if len(msg) % 2: msg += 'x'
+        return msg
+
+    def pos(self, ch):
+        for i, row in enumerate(self.matrix):
+            if ch in row: return i, row.index(ch)
+
+    def encrypt(self):
+        msg, enc = self.format_text(), ''
+        for a, b in [msg[i:i+2] for i in range(0, len(msg), 2)]:
+            x1, y1 = self.pos(a); x2, y2 = self.pos(b)
+            if x1 == x2:
+                enc += self.matrix[x1][(y1+1)%5] + self.matrix[x2][(y2+1)%5]
+            elif y1 == y2:
+                enc += self.matrix[(x1+1)%5][y1] + self.matrix[(x2+1)%5][y2]
+            else:
+                enc += self.matrix[x1][y2] + self.matrix[x2][y1]
+        return enc
+
+
+# --- Example Usage ---
+for key, text in [("Problem", "Playfair"), ("Problem", "Hello")]:
+    print(f"\nKey: {key}\nPlainText: {text}")
+    pf = Playfair(key, text)
+    pf.clean_key()
+    pf.gen_key_matrix()
+    print("Cipher Text is:", pf.encrypt())
