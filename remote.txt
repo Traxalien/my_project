@@ -1,109 +1,137 @@
-pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Building...'
-                bat 'java -version'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing...'
-                bat 'echo "Simulating tests"'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying...'
-            }
-        }
-    }
+import java.io.*;
+import java.util.*;
+
+public class Playfair {
+
+	String key;
+	String plainText;
+	int originalPlainTextLength;
+	char[][] matrix = new char[5][5];
+
+	public Playfair(String key, String plainText) {
+		this.key = key.toLowerCase();
+		this.plainText = plainText.toLowerCase();
+		this.originalPlainTextLength = plainText.length();
+	}
+
+	public void generateCipherKey() {
+		boolean[] used = new boolean[26];
+		StringBuilder keyString = new StringBuilder();
+
+		for (char c : key.toCharArray()) {
+			if (c == 'j') continue;
+			int index = c - 'a';
+			if (!used[index]) {
+				keyString.append(c);
+				used[index] = true;
+			}
+		}
+
+		for (int i = 0; i < 26; i++) {
+			if (i == ('j' - 'a')) continue;
+			if (!used[i]) {
+				keyString.append((char) ('a' + i));
+			}
+		}
+
+		System.out.println("Playfair Cipher Key Matrix:");
+		int k = 0;
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				matrix[i][j] = keyString.charAt(k++);
+			}
+			System.out.println(Arrays.toString(matrix[i]));
+		}
+	}
+
+	public int[] getCharPos(char ch) {
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				if (matrix[i][j] == ch) {
+					return new int[] { i, j };
+				}
+			}
+		}
+		return null;
+	}
+
+	public String encryptMessage() {
+		
+		String message = "";
+		
+		for (int i = 0; i < plainText.length(); i++) {
+			message += (plainText.charAt(i) == 'j' ? 'i' : plainText.charAt(i));
+		}
+
+		for (int i = 0; i < message.length(); i += 2) {
+			if (i + 1 < message.length()) {
+				if (message.charAt(i) == message.charAt(i + 1)) {
+					message = message.substring(0, i + 1) + 'x' + message.substring(i + 1);
+				}
+			}
+		}
+
+		if (originalPlainTextLength % 2 == 1) {
+			message += 'x';
+		}
+		
+		String encText = "";
+		int pairCount = message.length() / 2;
+		
+		for (int i = 0; i < pairCount; i++) {
+			char ch1 = message.charAt(2 * i);
+			char ch2 = message.charAt(2 * i + 1);
+
+			int[] ch1Pos = getCharPos(ch1);
+			int[] ch2Pos = getCharPos(ch2);
+
+			int r1 = ch1Pos[0], c1 = ch1Pos[1];
+			int r2 = ch2Pos[0], c2 = ch2Pos[1];
+
+			if (r1 == r2) {
+				c1 = (c1 + 1) % 5;
+				c2 = (c2 + 1) % 5;
+			} else if (c1 == c2) {
+				r1 = (r1 + 1) % 5;
+				r2 = (r2 + 1) % 5;
+			} else {
+				int temp = c1;
+				c1 = c2;
+				c2 = temp;
+			}
+
+			encText += matrix[r1][c1];
+			encText += matrix[r2][c2];
+		}
+
+		return encText;
+	}
+
+	public static void main(String[] args) {
+		System.out.println("Example-1\n");
+
+		String key1 = "Problem";
+		String plainText1 = "Playfair";
+
+		System.out.println("Key: " + key1);
+		System.out.println("PlainText: " + plainText1);
+
+		Playfair pfc1 = new Playfair(key1, plainText1);
+		pfc1.generateCipherKey();
+		String encText1 = pfc1.encryptMessage();
+		System.out.println("Cipher Text is: " + encText1);
+
+		System.out.println("\nExample-2\n");
+
+		String key2 = "Problem";
+		String plainText2 = "Hello";
+
+		System.out.println("Key: " + key2);
+		System.out.println("PlainText: " + plainText2);
+
+		Playfair pfc2 = new Playfair(key2, plainText2);
+		pfc2.generateCipherKey();
+		String encText2 = pfc2.encryptMessage();
+		System.out.println("Cipher Text is: " + encText2);
+	}
 }
-
-
-
-
-echo print('Hello from python')>Hello.py
-py Hello.py
-
-
-echo public class Hello{public static void main(String[] args ){System.out.println("HEllo from java");}}>Hello.java
-javac Hello.java
-java Hello
-
-
-
-exp1 git 
-
-git init
-echo "Hello from Shridhar" >demo.txt
-git status
-git add demo.txt
-git status
-git commit -m "Initial commit by Shridhar"
-git remote add origin https://github.com/Traxalien/legendary-goggles.git
-git branch -M main
-git push -u origin main
-
-
-
-exp2 git 
-git init
-echo "Main branch file by Shridhar" > main.txt
-git add .
-git commit -m "main branch initial commit by Shridhar"
-git branch feature
-git checkout feature
-echo "feature branch changes by Shridhar" > feature.txt
-git add .
-git commit -m "Added feature file by Shridhar"
-git checkout master
-git merge feature
-ls
-
-
-exp 3 git 
-
-git clone https://github.com/Traxalien/legendary-goggles.git
- cd legendary-goggles
- echo "This is Shridhar's remote demo" > remote.txt
-git add .
- git commit -m "Added remote demo files by Shridhar"
- git push origin main
-git pull origin main
-ls
-cat remote.txt
-
-
-
-
-
-
-
-
-
-
-
-# 1. Download (pull) an image from Docker Hub
-docker pull nginx:latest
-
-# 2. See all images on your machine
-docker images
-# OR: docker image ls
-
-# 3. Run an image to create a container (just to test)
-docker run -d -p 80:80 --name my-web-server nginx:latest
-
-# 4. Stop and remove the container
-docker stop my-web-server
-docker rm my-web-server
-
-# 5. Remove (delete) the image from your machine
-docker rmi nginx:latest
-
-# 6. Check images again to see it's gone
-docker images
-
-
-
