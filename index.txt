@@ -1,0 +1,204 @@
+cron job
+
+Step 1: Make your Python script
+
+Open terminal.
+
+Create a folder and go into it:
+
+mkdir cron_test && cd cron_test
+
+
+Create a file myscript.py:
+
+nano myscript.py
+
+
+Paste this:
+
+from datetime import datetime
+with open("/home/yourusername/cron_test/log.txt", "a") as f:
+    f.write(f"Script ran at: {datetime.now()}\n")
+
+
+(Replace yourusername with your Linux username — type whoami to check.)
+
+Save and exit (CTRL+O, ENTER, CTRL+X).
+
+Step 2: Test the script
+
+Run it manually:
+
+python3 myscript.py
+cat log.txt
+
+
+You should see one timestamp in log.txt.
+
+Step 3: Tell cron to run it automatically
+
+Find the python path:
+
+which python3
+
+
+(Usually it’s /usr/bin/python3.)
+
+Open cron settings:
+
+crontab -e
+
+
+Add this line at the bottom (replace path with yours):
+
+* * * * * /usr/bin/python3 /home/yourusername/cron_test/myscript.py
+
+
+Save and exit.
+
+Step 4: Wait and check
+
+Wait 2–3 minutes, then check:
+
+cat log.txt
+
+
+You’ll see new timestamps added every minute. 
+
+
+
+
+
+
+
+
+Uploading Files to AWS S3
+
+Step 1: Create an S3 bucket
+
+Log in to AWS Console.
+
+Go to S3 → Create bucket.
+
+Give a unique name (e.g., my-upload-bucket-123).
+
+Leave defaults and click Create bucket.
+
+Step 2: Create a Lambda function
+
+Go to Lambda → Create function.
+
+Select Author from scratch.
+
+Name it (e.g., S3UploadLogger).
+
+Runtime: Python 3.9.
+
+Create function.
+
+Step 3: Add S3 Trigger
+
+In your Lambda function page → Add trigger.
+
+Choose S3.
+
+Select your bucket.
+
+Event type: PUT (ObjectCreated:Put).
+
+Add trigger.
+
+Step 4: Add Lambda code
+
+Use this simple code:
+
+import json
+
+def lambda_handler(event, context):
+    print("Event received:", json.dumps(event))
+    bucket = event['Records'][0]['s3']['bucket']['name']
+    filename = event['Records'][0]['s3']['object']['key']
+    print(f"File uploaded: {filename} in bucket: {bucket}")
+    return {
+        'statusCode': 200,
+        'body': f"Logged upload of {filename} in {bucket}"
+    }
+
+
+Click Deploy.
+
+Step 5: Test the setup
+
+Upload any file (e.g., test.txt) into your S3 bucket.
+
+Go to CloudWatch → Logs → Log groups → /aws/lambda/S3UploadLogger.
+
+
+
+
+
+
+
+
+
+
+Step 2: Create S3 Bucket
+
+Log in to AWS Console → go to S3.
+
+Click Create bucket.
+
+Give it a unique name (e.g., my-static-site-123).
+
+Region: choose nearest to you.
+
+Disable Block all public access (important for website hosting).
+
+Create bucket.
+
+Step 3: Upload File
+
+Open your bucket → Upload → select index.html.
+
+Click Upload.
+
+Step 4: Enable Static Website Hosting
+
+Inside bucket → Properties tab.
+
+Scroll to Static website hosting → Enable.
+
+Choose Host a static website.
+
+Index document: index.html.
+
+Save → AWS gives you a website endpoint URL (e.g., http://my-static-site-123.s3-website.ap-south-1.amazonaws.com).
+
+Step 5: Allow Public Read Access
+
+Go to Permissions tab → Bucket policy.
+
+Paste this (replace with your bucket name):
+
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::my-static-site-123/*"
+    }
+  ]
+}
+
+
+Save changes.
+
+
+
+
+
+
+
